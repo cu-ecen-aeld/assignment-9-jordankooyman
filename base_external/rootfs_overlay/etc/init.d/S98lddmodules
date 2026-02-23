@@ -1,0 +1,28 @@
+#!/bin/sh
+#
+# Start/stop ldd kernel modules (scull, faulty, hello)
+#
+# Written using DeepSeek: https://chat.deepseek.com/share/899mpdqxn8b7zdq1xm
+#
+
+case "$1" in
+    start)
+        echo "Loading ldd modules..."
+        # Load modules using modprobe (preferred) or insmod
+        modprobe hello      # if hello is a module
+        modprobe faulty     # (if faulty is built as a module; it is in misc-modules)
+        modprobe scull      # the scull driver
+        # Note: if modules are not in the standard path, ensure depmod ran.
+        ;;
+    stop)
+        echo "Unloading ldd modules..."
+        rmmod hello
+        rmmod faulty
+        rmmod scull
+        ;;
+    *)
+        echo "Usage: $0 {start|stop}"
+        exit 1
+        ;;
+esac
+exit 0
