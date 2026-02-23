@@ -2,24 +2,60 @@
 #
 # Start/stop ldd kernel modules (scull, faulty, hello)
 #
-# Written using DeepSeek: https://chat.deepseek.com/share/899mpdqxn8b7zdq1xm
+# Written using DeepSeek: https://chat.deepseek.com/share/tc0awesz0lubhkhee2
 #
+
+MODULES="hello faulty scull"
+DEVICES="faulty scull0 scull1 scull2 scull3 scullpipe0 scullpipe1 scullpipe2 scullpipe3 scullsingle sculluid scullwuid scullpriv"
 
 case "$1" in
     start)
-        echo "Loading ldd modules..."
-        # Load modules using modprobe (preferred) or insmod
-        modprobe hello      # if hello is a module
-        modprobe faulty     # (if faulty is built as a module; it is in misc-modules)
-        modprobe scull      # the scull driver
-        # Note: if modules are not in the standard path, ensure depmod ran.
+        echo "Loading ldd modules and creating device nodes..."
+        # Load modules (modprobe handles dependencies)
+        modprobe hello
+        modprobe faulty
+        modprobe scull
+
+        # Create device nodes for faulty
+        major_faulty=$(awk '$2=="faulty" {print $1}' /proc/devices)
+        if [ -n "$major_faulty" ]; then
+            mknod -m 666 /dev/faulty c $major_faulty 0
+        else
+            echo "faulty module not found in /proc/devices"
+        fi
+
+        # Create device nodes for scull (multiple minors)
+        major_scull=$(awk '$2=="scull" {print $1}' /proc/devices)
+        if [ -n "$major_scull" ]; then
+            for minor in 0 1 2 3; do
+                mknod -m 666 /dev/scull$minor c $major_scull $minor
+            done
+            # Additional scull variants (if compiled)
+            mknod -m 666 /dev/scullpipe0 c $major_scull 4
+            mknod -m 666 /dev/scullpipe1 c $major_scull 5
+            mknod -m 666 /dev/scullpipe2 c $major_scull 6
+            mknod -m 666 /dev/scullpipe3 c $major_scull 7
+            mknod -m 666 /dev/scullsingle c $major_scull 8
+            mknod -m 666 /dev/sculluid   c $major_scull 9
+            mknod -m 666 /dev/scullwuid  c $major_scull 10
+            mknod -m 666 /dev/scullpriv  c $major_scull 11
+        else
+            echo "scull module not found in /proc/devices"
+        fi
         ;;
+
     stop)
-        echo "Unloading ldd modules..."
-        rmmod hello
-        rmmod faulty
+        echo "Unloading ldd modules and removing device nodes..."
+        # Remove nodes first (they are useless after module unload)
+        for dev in $DEVICES; do
+            rm -f /dev/$dev
+        done
+        # Unload modules
         rmmod scull
+        rmmod faulty
+        rmmod hello
         ;;
+
     *)
         echo "Usage: $0 {start|stop}"
         exit 1
