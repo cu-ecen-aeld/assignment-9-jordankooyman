@@ -1,4 +1,5 @@
 #!/bin/sh
+# file: S98aesdchar
 #
 # Start/stop aesdchar kernel module
 #

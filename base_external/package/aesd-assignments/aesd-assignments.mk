@@ -4,7 +4,7 @@
 # AESD-ASSIGNMENTS
 #
 ##############################################################
-# File completed with assistance from DeepSeek: https://chat.deepseek.com/share/ke9swxjqsdmp9ceyr9, https://chat.deepseek.com/share/n28hbtrje83qo6o0ek, https://chat.deepseek.com/share/zby63u8kkklc86pgpx
+# File completed with assistance from DeepSeek: https://chat.deepseek.com/share/ke9swxjqsdmp9ceyr9, https://chat.deepseek.com/share/n28hbtrje83qo6o0ek, https://chat.deepseek.com/share/9nslfci45g6xdkw2a2
 
 # Fill up the contents below in order to reference your assignment 3 git contents
 AESD_ASSIGNMENTS_VERSION = '2a57738'
@@ -46,6 +46,9 @@ define AESD_ASSIGNMENTS_INSTALL_TARGET_CMDS
 	
 	# Install the AESDChar kernel module
 	$(MAKE) -C $(LINUX_DIR) M=$(@D)/aesd-char-driver modules_install
+
+	# Update module dependencies
+	$(HOST_DIR)/sbin/depmod -a -b $(TARGET_DIR) $(LINUX_VERSION_PROBED)
 	
 	# Install aesdsocket executable to /usr/bin
 	$(INSTALL) -m 0755 $(@D)/server/aesdsocket $(TARGET_DIR)/usr/bin
