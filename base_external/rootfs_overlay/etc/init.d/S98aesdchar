@@ -8,14 +8,7 @@
 
 MODULE="aesdchar"
 DEVICE="aesdchar"
-MODE="666"
-
-# Determine the group (wheel or staff) for permissions
-if grep -q '^staff:' /etc/group 2>/dev/null; then
-    GROUP="staff"
-else
-    GROUP="wheel"
-fi
+MODE="664"
 
 case "$1" in
     start)
@@ -37,7 +30,6 @@ case "$1" in
         mknod /dev/${DEVICE} c $MAJOR 0
 
         # Set permissions
-        chgrp $GROUP /dev/${DEVICE}
         chmod $MODE  /dev/${DEVICE}
 
         echo "$MODULE device node created at /dev/${DEVICE}"
