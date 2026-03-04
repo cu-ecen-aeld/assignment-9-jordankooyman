@@ -4,10 +4,10 @@
 # AESD-ASSIGNMENTS
 #
 ##############################################################
-# File completed with assistance from DeepSeek: https://chat.deepseek.com/share/ke9swxjqsdmp9ceyr9, https://chat.deepseek.com/share/n28hbtrje83qo6o0ek, https://chat.deepseek.com/share/9nslfci45g6xdkw2a2, https://chat.deepseek.com/share/x5kx4uuj47fj9mkfln, https://chat.deepseek.com/share/j8vw3c9sbf027f7xe7
+# File completed with assistance from DeepSeek: https://chat.deepseek.com/share/ke9swxjqsdmp9ceyr9, https://chat.deepseek.com/share/n28hbtrje83qo6o0ek, https://chat.deepseek.com/share/9nslfci45g6xdkw2a2, https://chat.deepseek.com/share/x5kx4uuj47fj9mkfln, https://chat.deepseek.com/share/j8vw3c9sbf027f7xe7, https://claude.ai/share/9a4a44e3-7fa6-4ed8-9f63-768d2319d8ad
 
 # Fill up the contents below in order to reference your assignment 3 git contents
-AESD_ASSIGNMENTS_VERSION = 2a57738
+AESD_ASSIGNMENTS_VERSION = 5fce2da
 # Note: Be sure to reference the *ssh* repository URL here (not https) to work properly
 # with ssh keys and the automated build/test system.
 # Your site should start with git@github.com:
@@ -26,7 +26,7 @@ define AESD_ASSIGNMENTS_BUILD_CMDS
 	$(MAKE) ARCH=$(KERNEL_ARCH) CROSS_COMPILE=$(TARGET_CROSS) -C $(LINUX_DIR) M=$(@D)/aesd-char-driver modules
 	
 	# Build aesdsocket from server directory with cross-compilation support
-	$(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D)/server all
+	$(MAKE) $(TARGET_CONFIGURE_OPTS) DRIVER_DIR=$(@D)/aesd-char-driver -C $(@D)/server all
 endef
 
 define AESD_ASSIGNMENTS_INSTALL_TARGET_CMDS
